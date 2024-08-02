@@ -1,16 +1,22 @@
 package com.plcoding.stockmarketapp.presentation.company_listing
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +35,7 @@ fun CompanyListingsScreen(
 
     val state = companyListingViewModel.state
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
         OutlinedTextField(
             value = state.searchQuery,
@@ -49,25 +55,31 @@ fun CompanyListingsScreen(
             singleLine = true
         )
 
-        SwipeRefresh(
-            state = swipeRefreshState,
-            onRefresh = {
-                companyListingViewModel.onEvent(CompanyListingEvents.Refresh)
-            })
-        {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                itemsIndexed(state.companies) {index, item ->
-                    CompanyItem(
-                        companyListingModel = item,
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                //Navigate to Detail Screen
-                            }
-                    )
-                    if(index < state.companies.size) {
-                        Divider(Modifier.padding(horizontal = 15.dp))
+        AnimatedVisibility(visible = state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.padding(top = 50.dp))
+        }
+
+        AnimatedVisibility(visible = !state.isLoading, enter = fadeIn(), exit = fadeOut()) {
+            SwipeRefresh(
+                state = swipeRefreshState,
+                onRefresh = {
+                    companyListingViewModel.onEvent(CompanyListingEvents.Refresh)
+                })
+            {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    itemsIndexed(state.companies) { index, item ->
+                        CompanyItem(
+                            companyListingModel = item,
+                            modifier = Modifier
+                                .padding(15.dp)
+                                .fillMaxWidth()
+                                .clickable {
+                                    //Navigate to Detail Screen
+                                }
+                        )
+                        if (index < state.companies.size) {
+                            Divider(Modifier.padding(horizontal = 15.dp))
+                        }
                     }
                 }
             }

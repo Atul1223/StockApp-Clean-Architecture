@@ -24,6 +24,10 @@ class CompanyListingViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
+    init {
+        getCompanyListings()
+    }
+
     fun onEvent(event: CompanyListingEvents) {
         listOf(
             when (event) {

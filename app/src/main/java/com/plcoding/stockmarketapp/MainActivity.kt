@@ -9,9 +9,16 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavGraph
+import com.plcoding.stockmarketapp.presentation.company_listing.NavGraphs
 import com.plcoding.stockmarketapp.ui.theme.StockMarketAppTheme
+import com.ramcosta.composedestinations.DestinationsNavHost
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,9 +26,9 @@ class MainActivity : ComponentActivity() {
             StockMarketAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = Color.DarkGray
                 ) {
-                    
+                    DestinationsNavHost(navGraph = NavGraphs.root)
                 }
             }
         }
