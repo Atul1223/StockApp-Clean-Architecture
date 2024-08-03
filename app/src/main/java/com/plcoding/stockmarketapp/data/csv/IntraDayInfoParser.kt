@@ -1,5 +1,6 @@
 package com.plcoding.stockmarketapp.data.csv
 
+import android.util.Log
 import com.opencsv.CSVReader
 import com.plcoding.stockmarketapp.data.mapper.toIntraDayInfoModel
 import com.plcoding.stockmarketapp.data.remote.dto.IntraDayInfoDto
@@ -9,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,7 +33,14 @@ class IntraDayInfoParser @Inject constructor(): CSVParser<IntraDayInfoModel> {
                     dto.toIntraDayInfoModel()
                 }
                 .filter {
-                    it.date.dayOfMonth == LocalDateTime.now().minusDays(1).dayOfMonth //yesterday
+                    val day = LocalDate.now().dayOfWeek.name
+                    if(day.lowercase() == "sunday") {
+                        it.date.dayOfMonth == LocalDate.now().minusDays(2).dayOfMonth
+                    } else if( day.lowercase() == "monday") {
+                        it.date.dayOfMonth == LocalDate.now().minusDays(3).dayOfMonth
+                    } else {
+                        it.date.dayOfMonth == LocalDate.now().minusDays(1).dayOfMonth //yesterday
+                    }
                 }
                 .sortedBy {
                     it.date.hour
